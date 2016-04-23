@@ -1,0 +1,57 @@
+#!/bin/bash
+
+INSTALLERS_DIR=./installers/
+SETUP_DIR=./setup/
+
+usage() {
+	echo "-i | --install"
+	echo "-s | --setup"
+	echo "-p <program_name> | --program <program_name>"
+	echo "-h | --help"
+	echo "Default is --install"
+}
+
+for i in "$@"
+do
+case $i in
+	-i|--install)
+	SEARCH_DIR=$INSTALLERS_DIR
+	shift
+	;;
+	-s|--setup)
+	SEARCH_DIR=$SETUP_DIR
+	shift
+	;;
+	-p|--program)
+	PROGRAM=$2
+	shift
+	;;
+	-h|--help)
+	usage
+	exit 0
+	;;
+	*)
+	EXTRA_PARAMS="$EXTRA_PARAMS $1"	
+	shift
+	;;
+esac
+done
+
+if [ -z "$SEARCH_DIR" ]; then
+	SEARCH_DIR=$INSTALLERS_DIR
+fi
+
+if [ -z "$PROGRAM" ]; then
+	echo "Fuck all not found"
+	exit 1
+fi
+
+SCRIPT_TO_RUN=$(find $SEARCH_DIR -name "$PROGRAM.sh")
+
+if [ -z "$SCRIPT_TO_RUN" ]; then
+	echo "Fuck all found"
+	exit 2
+fi
+
+$SCRIPT_TO_RUN $EXTRA_PARAMS
+
